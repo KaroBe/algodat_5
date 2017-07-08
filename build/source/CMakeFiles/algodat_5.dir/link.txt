@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++11   CMakeFiles/algodat_5.dir/algodat_5.cpp.o  -o algodat_5 -rdynamic 
