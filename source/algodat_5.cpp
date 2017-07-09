@@ -129,7 +129,8 @@ dense_points min_dense(point_vec& pairs, pv_iterator start, int n)
 	float dis_r = distance(right.first, right.second);
 
 	/*
-	
+	determine the more dense pair of points and assign it to most_dense_points
+	and min_distance
 	*/
 	float min_distance;
 	dense_points most_dense_points;
@@ -149,7 +150,7 @@ dense_points min_dense(point_vec& pairs, pv_iterator start, int n)
 	from separating x-value*/
 	point_vec median;
 
-	//fill vec
+	//fill vector with points that are in min_dis distance from mid-element
 	for(point p : pairs)
 	{
 		// x-value smaller than of pairs[mid].first by maximum min_dis or
