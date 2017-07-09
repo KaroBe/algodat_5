@@ -5,7 +5,7 @@ Karoline Brehm
 
 SS2017
 
-Algorithmen und Datenstrukturen - Beleg 3
+Algorithmen und Datenstrukturen - Beleg 5
 
 */
 
@@ -32,7 +32,7 @@ float distance(point a, point b)
 }
 	
 /* brute force compute the most dense points */
-dense_points brute_force(point_vec pairs, pv_iterator i, int n)
+dense_points brute_force(point_vec& pairs, pv_iterator i, int n)
 {
 	//iterator to first element in subarray
 	pv_iterator j = i + 1;
@@ -66,7 +66,7 @@ dense_points brute_force(point_vec pairs, pv_iterator i, int n)
 /* find if two points that have shortest distance crossing sides have
 shorter distance than the most dense points of the two sides and
 overwrite min_dis and most_dense_points accordingly*/
-void crossing_min_dense (point_vec median, 
+void crossing_min_dense (point_vec& median, 
 	dense_points& most_dense_points, float& min_dis)
 {
 	//sort vector according to y-Kooridinate (pair.first)
@@ -81,8 +81,7 @@ void crossing_min_dense (point_vec median,
 		//while iterating, stop if y-distance between points becomes
 		//greater than the min-distance, because those points can't have
 		//a distance < min
-		for(int j = i+1; j<median.size()
-			&& median[j].second - median[i].second < min)
+		for(int j = i+1; j<median.size() && (median[j].second-median[i].second) < min_dis; ++j)
 		{
 			float dis_ij = distance(median[i],median[j]); 
 			if (dis_ij < min_dis)
@@ -97,7 +96,7 @@ void crossing_min_dense (point_vec median,
 
 /* min_dense function
 takes vector of pairs and int n of vector size */
-dense_points min_dense(point_vec pairs, pv_iterator start, int n)
+dense_points min_dense(point_vec& pairs, pv_iterator start, int n)
 {
 	/* check criterion for stopping rekusion */
 	if (n <= 3) //2 or 3
@@ -129,8 +128,9 @@ dense_points min_dense(point_vec pairs, pv_iterator start, int n)
 	float dis_l = distance(left.first, left.second);
 	float dis_r = distance(right.first, right.second);
 
-	/* min(dl,dr) = min_distance */
-
+	/*
+	
+	*/
 	float min_distance;
 	dense_points most_dense_points;
 
@@ -167,19 +167,21 @@ dense_points min_dense(point_vec pairs, pv_iterator start, int n)
 
 	//call crossing_min_dense, which overwrites min_dis and most_dense_points
 	//if closer points are found across the median
-	crossing_min_dense (median, most_dense_points, min_dis);
+	crossing_min_dense (median, most_dense_points, min_distance);
 
 	/* return the two most dense points */
+	return most_dense_points;
+
 }
 
 int main ()
 {
 	//set parameters for points
 	int n = 100;		//number of points
-	int max = 1000;	//interval in which points shall lie [0,max]
+	int max = 10000;	//interval in which points shall lie [0,max]
 
-	//create vector of n random pairs in x/y intervals [0,max]
-	point_vec points (100);
+	//create vector of n random pairs in x and y interval [0,max]
+	point_vec points (n);
 
 	for (auto& p : points)
 	{
@@ -187,20 +189,42 @@ int main ()
 							0 + std::rand() % max + 1);
 	}
 
-	//sort vector according to x-Kooridinate (pair.first)
+	//sort vector according to x-Kooridinate (stored in pair.first)
 	std::sort(points.begin(), points.end(),
 		[](point const& lhs, point const& rhs)
 		-> bool {return (lhs.first <= rhs.first);});
 
-	//print points
+	/* OPTIONAL BRUTE FORCE DOUBLES ELIMINATION (manly to test algorithm, because rand()
+	fuction created doubles when using two digit interval and few points)
+	for(int i = 0; i<points.size()-1; ++i)
+	{
+		std::cout << "\npoint i: \t" << points[i].first << ", " << points[i].second;
+		std::cout << "\npoint i+1: \t" << points[i+1].first << ", " << points[i+1].second;
+		std::cout <<"\n";
+		
+		if (points[i].first == points[i+1].first)
+		{
+			if (points[i].second == points[i+1].second)
+			{
+				std::cout << "\nerase";
+				points.erase(points.begin()+i+1);
+			}
+		}
+	}
+	*/
+
+	/* OPTIONAL PRINTING OF POINTS */
 	for (auto& p : points)
 	{
 		std::cout << p.first << ", " << p.second << "\n";
 	}
 
 	//call min_dense function on these points
-	dense_points result = min_dense(points, points.begin(), n);
+	dense_points result = min_dense(points, points.begin(), points.size());
 
 	//print result
+	std::cout << "\n The closest points are: \n";
+	std::cout << "(" << result.first.first << ", " << result.first.second << ")\n";
+	std::cout << "(" << result.second.first << ", " << result.second.second << ")\n";
 
 }
